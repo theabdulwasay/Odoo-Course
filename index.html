@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Odoo for Business - Full Visible ERP Master Academy & Job Portal</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            odoo: {
+              purple: '#714B67',
+              darkpurple: '#56384F',
+              teal: '#00A09D',
+              lightteal: '#E6F6F6'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
+
+  <!-- Top Navbar -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand Logo & Title -->
+      <div class="flex items-center space-x-3">
+        <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="showHomeScreen()">
+          <div class="w-10 h-10 rounded-xl bg-odoo-purple flex items-center justify-center text-white font-black text-2xl shadow-md">
+            O
+          </div>
+          <div>
+            <h1 class="text-lg font-extrabold text-slate-900 leading-none">Odoo for Business</h1>
+            <p class="text-xs text-odoo-teal font-bold mt-0.5">Full Visible ERP Master Academy & Consultant Portal</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="hidden lg:flex items-center space-x-1.5 text-xs font-extrabold text-slate-800">
+        <button onclick="showHomeScreen()" id="topNavHome" class="px-3.5 py-2 rounded-xl hover:bg-slate-100 transition flex items-center space-x-1.5">
+          <i data-lucide="layout-dashboard" class="w-4 h-4 text-odoo-purple"></i>
+          <span>Course Roadmap</span>
+        </button>
+        <button onclick="showInterviewPortal()" id="topNavInterview" class="px-3.5 py-2 rounded-xl hover:bg-slate-100 transition flex items-center space-x-1.5">
+          <i data-lucide="help-circle" class="w-4 h-4 text-indigo-600"></i>
+          <span>Interview Q&A (50+)</span>
+        </button>
+        <button onclick="showBlueprintScreen()" id="topNavBlueprint" class="px-3.5 py-2 rounded-xl hover:bg-slate-100 transition flex items-center space-x-1.5">
+          <i data-lucide="briefcase" class="w-4 h-4 text-emerald-600"></i>
+          <span>Client Blueprint</span>
+        </button>
+        <button onclick="showTemplatesScreen()" id="topNavTemplates" class="px-3.5 py-2 rounded-xl hover:bg-slate-100 transition flex items-center space-x-1.5">
+          <i data-lucide="file-text" class="w-4 h-4 text-amber-600"></i>
+          <span>Consultant Templates</span>
+        </button>
+      </nav>
+
+      <!-- Quick Search Bar -->
+      <div class="hidden sm:flex flex-1 max-w-xs mx-4">
+        <div class="relative w-full cursor-pointer" onclick="openSearchModal()">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <i data-lucide="search" class="w-4 h-4"></i>
+          </div>
+          <input type="text" readonly placeholder="Search topics, interview Qs... (Ctrl+K)" 
+            class="w-full pl-9 pr-10 py-1.5 bg-slate-100 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none hover:bg-slate-50 transition cursor-pointer">
+          <div class="absolute inset-y-0 right-0 pr-2 flex items-center">
+            <kbd class="px-1.5 py-0.5 text-[9px] font-mono text-slate-500 bg-white border border-slate-200 rounded shadow-2xs">Ctrl K</kbd>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overall Progress & Controls -->
+      <div class="flex items-center space-x-3">
+        <div class="hidden sm:flex flex-col text-right">
+          <div class="flex items-center space-x-1.5 text-xs font-bold">
+            <span class="text-slate-500">Progress:</span>
+            <span id="overallProgressText" class="text-odoo-purple">0%</span>
+          </div>
+          <div class="w-28 bg-slate-200 rounded-full h-2 mt-1 overflow-hidden">
+            <div id="overallProgressBar" class="bg-odoo-purple h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <button onclick="openCertificateModal()" id="certBtn" title="View Certificate"
+          class="flex items-center space-x-1 px-3 py-1.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-xl text-xs font-extrabold hover:bg-amber-200 transition">
+          <i data-lucide="award" class="w-4 h-4 text-amber-700"></i>
+          <span class="hidden md:inline">Certificate</span>
+        </button>
+
+        <button onclick="resetAllProgress()" title="Reset Progress" class="p-2 text-slate-400 hover:text-red-600 rounded-xl hover:bg-slate-100 transition">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="flex-1 flex max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 gap-6">
+
+    <!-- Collapsible Sidebar Navigation -->
+    <aside id="sidebar" class="w-72 shrink-0 bg-white border border-slate-200 rounded-2xl shadow-2xs p-4 hidden md:block self-start sticky top-22 max-h-[calc(100vh-6rem)] overflow-y-auto">
+      
+      <!-- Quick View Links -->
+      <div class="space-y-1 mb-3">
+        <button onclick="showHomeScreen()" id="navHomeBtn"
+          class="sidebar-nav-item w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-bold text-slate-800 transition">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="layout-dashboard" class="w-4 h-4 text-odoo-purple"></i>
+            <span>Course Roadmap</span>
+          </div>
+          <span class="text-[10px] bg-purple-100 text-purple-900 px-2 py-0.5 rounded-full font-black">36 hrs</span>
+        </button>
+
+        <button onclick="showInterviewPortal()" id="navInterviewBtn"
+          class="sidebar-nav-item w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-bold text-slate-800 transition">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="help-circle" class="w-4 h-4 text-indigo-600"></i>
+            <span>Interview Q&A Portal</span>
+          </div>
+          <span class="text-[10px] bg-indigo-100 text-indigo-900 px-2 py-0.5 rounded-full font-black">50+ Qs</span>
+        </button>
+
+        <button onclick="showBlueprintScreen()" id="navBlueprintBtn"
+          class="sidebar-nav-item w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-bold text-slate-800 transition">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="briefcase" class="w-4 h-4 text-emerald-600"></i>
+            <span>Client Blueprint</span>
+          </div>
+          <span class="text-[10px] bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded-full font-black">Guide</span>
+        </button>
+
+        <button onclick="showTemplatesScreen()" id="navTemplatesBtn"
+          class="sidebar-nav-item w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-bold text-slate-800 transition">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="file-text" class="w-4 h-4 text-amber-600"></i>
+            <span>CSV & Form Templates</span>
+          </div>
+          <span class="text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-black">Toolkit</span>
+        </button>
+      </div>
+
+      <div class="border-t border-slate-100 my-3"></div>
+
+      <!-- Curriculum Timeline Weeks -->
+      <div class="space-y-3">
+        <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-wider px-2">6-Week Curriculum</h3>
+        <div id="weeksNavContainer" class="space-y-2">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </div>
+
+      <div class="border-t border-slate-100 my-4"></div>
+
+      <!-- Final Practical Test Link -->
+      <button onclick="showFinalExam()" id="navFinalExamBtn"
+        class="w-full flex items-center justify-between p-3 bg-gradient-to-r from-purple-900 to-odoo-purple text-white rounded-xl text-xs font-extrabold shadow-md hover:opacity-95 transition">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="graduation-cap" class="w-4 h-4 text-amber-300"></i>
+          <span>Final Exam & Certificate</span>
+        </div>
+        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+      </button>
+
+    </aside>
+
+    <!-- Main Content Workspace -->
+    <main class="flex-1 min-w-0">
+
+      <!-- HOME DASHBOARD VIEW -->
+      <div id="homeScreen" class="space-y-6">
+        
+        <!-- Hero Banner -->
+        <div class="bg-gradient-to-r from-odoo-purple via-purple-900 to-indigo-950 rounded-2xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
+          <div class="relative z-10 max-w-2xl">
+            <span class="inline-flex items-center space-x-1 px-3.5 py-1 bg-white/10 backdrop-blur rounded-full text-xs font-black text-amber-300 mb-3 border border-white/20">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              <span>Master Odoo Functional Consultant Program</span>
+            </span>
+            <h2 class="text-2xl sm:text-3xl font-black tracking-tight mb-2">ODOO FOR BUSINESS</h2>
+            <p class="text-purple-100 text-xs sm:text-sm font-medium leading-relaxed mb-6">
+              Master Sales, Purchasing, Landed Costs, Inventory (FIFO/FEFO), Deferred Revenue, Multi-level BoM, Payroll, and Odoo Studio Python Server Actions with bilingual English + Roman Urdu guides and copyable client templates.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <button onclick="loadSession('session-1a')" class="px-5 py-2.5 bg-odoo-teal hover:bg-teal-600 text-white font-extrabold rounded-xl text-xs shadow transition flex items-center space-x-2">
+                <i data-lucide="play-circle" class="w-4 h-4"></i>
+                <span>Start Session 1A</span>
+              </button>
+              <button onclick="showInterviewPortal()" class="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-xs transition border border-white/20 flex items-center space-x-2">
+                <i data-lucide="help-circle" class="w-4 h-4"></i>
+                <span>50+ Partner Interview Qs</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Course Quick Stats Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="bg-white p-4.5 rounded-2xl border border-slate-200 shadow-2xs">
+            <div class="text-xs text-slate-500 font-bold">Total Duration</div>
+            <div class="text-xl font-black text-slate-900 mt-1">36 Hours</div>
+            <div class="text-xs text-purple-700 font-extrabold mt-0.5">6 Weeks • 6 hrs/wk</div>
+          </div>
+          <div class="bg-white p-4.5 rounded-2xl border border-slate-200 shadow-2xs">
+            <div class="text-xs text-slate-500 font-bold">Total Sessions</div>
+            <div class="text-xl font-black text-slate-900 mt-1">12 Sessions</div>
+            <div class="text-xs text-teal-700 font-extrabold mt-0.5">3 Hours per Session</div>
+          </div>
+          <div class="bg-white p-4.5 rounded-2xl border border-slate-200 shadow-2xs">
+            <div class="text-xs text-slate-500 font-bold">Interview Prep</div>
+            <div class="text-xl font-black text-slate-900 mt-1">50+ Top Q&As</div>
+            <div class="text-xs text-indigo-700 font-extrabold mt-0.5">English + Roman Urdu</div>
+          </div>
+          <div class="bg-white p-4.5 rounded-2xl border border-slate-200 shadow-2xs">
+            <div class="text-xs text-slate-500 font-bold">Client Toolkits</div>
+            <div class="text-xl font-black text-slate-900 mt-1">CSV & Forms</div>
+            <div class="text-xs text-emerald-700 font-extrabold mt-0.5">Copyable Templates</div>
+          </div>
+        </div>
+
+        <!-- Weeks Overview Grid -->
+        <div>
+          <h3 class="text-lg font-extrabold text-slate-900 mb-4 flex items-center space-x-2">
+            <i data-lucide="book-open" class="w-5 h-5 text-odoo-purple"></i>
+            <span>Course Roadmap & Modules</span>
+          </h3>
+          <div id="homeWeeksGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SESSION WORKSPACE VIEW (Hidden by default) -->
+      <div id="sessionWorkspace" class="hidden space-y-6">
+
+        <!-- Session Header Bar -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+            <div class="flex items-center space-x-2">
+              <span id="sessionCodeBadge" class="px-3 py-1 bg-purple-100 text-purple-900 rounded-lg font-mono font-black text-xs">Session 1A</span>
+              <span id="sessionDurationBadge" class="px-3 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold">3 Hours</span>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+              <button id="toggleCompleteBtn" onclick="toggleCurrentSessionComplete()"
+                class="px-4 py-2 border border-slate-300 text-slate-800 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 rounded-xl text-xs font-extrabold transition flex items-center space-x-1.5">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <span id="completeBtnText">Mark Session Complete</span>
+              </button>
+            </div>
+          </div>
+
+          <h2 id="sessionTitle" class="text-xl sm:text-2xl font-black text-slate-900 mb-2">Session Title</h2>
+          <div id="sessionAppsBadges" class="flex flex-wrap gap-1.5">
+            <!-- App Badges populated via JS -->
+          </div>
+        </div>
+
+        <!-- Session View Tabs -->
+        <div class="bg-white border-b border-slate-200 rounded-t-2xl px-4 flex space-x-6 overflow-x-auto shadow-2xs">
+          <button onclick="switchTab('tab-lesson')" id="tabBtn-lesson" class="tab-btn active py-3 text-xs font-extrabold border-b-2 border-transparent transition flex items-center space-x-2">
+            <i data-lucide="book-open" class="w-4 h-4"></i>
+            <span>Lesson Reader</span>
+          </button>
+          <button onclick="switchTab('tab-lab')" id="tabBtn-lab" class="tab-btn py-3 text-xs font-extrabold border-b-2 border-transparent transition flex items-center space-x-2">
+            <i data-lucide="flask-conical" class="w-4 h-4"></i>
+            <span>Hands-On Lab</span>
+          </button>
+          <button onclick="switchTab('tab-quiz')" id="tabBtn-quiz" class="tab-btn py-3 text-xs font-extrabold border-b-2 border-transparent transition flex items-center space-x-2">
+            <i data-lucide="help-circle" class="w-4 h-4"></i>
+            <span>Knowledge Quiz</span>
+          </button>
+          <button onclick="switchTab('tab-checkpoint')" id="tabBtn-checkpoint" class="tab-btn py-3 text-xs font-extrabold border-b-2 border-transparent transition flex items-center space-x-2">
+            <i data-lucide="flag" class="w-4 h-4"></i>
+            <span>Weekly Checkpoint</span>
+          </button>
+        </div>
+
+        <!-- TAB CONTENT PANELS -->
+        
+        <!-- Tab 1: Lesson Reader -->
+        <div id="tabContent-lesson" class="bg-white p-6 rounded-b-2xl border border-t-0 border-slate-200 shadow-2xs space-y-6">
+          <div class="bg-purple-50 border border-purple-200 rounded-2xl p-4.5">
+            <h4 class="text-xs font-black text-purple-900 uppercase tracking-wider mb-2 flex items-center space-x-1.5">
+              <i data-lucide="target" class="w-4 h-4 text-purple-700"></i>
+              <span>Learning Objectives</span>
+            </h4>
+            <ul id="sessionObjectivesList" class="list-disc pl-5 text-xs font-semibold text-purple-950 space-y-1.5">
+              <!-- Objectives JS -->
+            </ul>
+          </div>
+
+          <div id="sessionContentBody" class="prose prose-sm max-w-none text-slate-900">
+            <!-- Dynamic HTML Content -->
+          </div>
+        </div>
+
+        <!-- Tab 2: Hands-On Lab -->
+        <div id="tabContent-lab" class="hidden bg-white p-6 rounded-b-2xl border border-t-0 border-slate-200 shadow-2xs space-y-6">
+          <div class="flex items-center justify-between border-b pb-4">
+            <div>
+              <h3 id="labTitle" class="text-base font-extrabold text-slate-900">Practical Lab Exercise</h3>
+              <p class="text-xs text-slate-600 font-medium">Follow these steps in your Odoo training database to complete the hands-on lab.</p>
+            </div>
+            <span class="px-3 py-1 bg-amber-100 text-amber-900 rounded-full text-xs font-extrabold">Hands-On Practice</span>
+          </div>
+
+          <div class="space-y-3" id="labInstructionsList">
+            <!-- Lab instructions checkable items -->
+          </div>
+        </div>
+
+        <!-- Tab 3: Knowledge Quiz -->
+        <div id="tabContent-quiz" class="hidden bg-white p-6 rounded-b-2xl border border-t-0 border-slate-200 shadow-2xs space-y-6">
+          <div class="flex items-center justify-between border-b pb-4">
+            <div>
+              <h3 class="text-base font-extrabold text-slate-900">Knowledge Check Quiz</h3>
+              <p class="text-xs text-slate-600 font-medium">Test your understanding of the concepts covered in this session.</p>
+            </div>
+            <div id="quizScoreBadge" class="hidden px-3 py-1 bg-purple-100 text-purple-900 rounded-full text-xs font-black">
+              Score: <span id="quizScoreText">0/0</span>
+            </div>
+          </div>
+
+          <div id="quizContainer" class="space-y-6">
+            <!-- Dynamic Quiz Questions -->
+          </div>
+        </div>
+
+        <!-- Tab 4: Weekly Checkpoint -->
+        <div id="tabContent-checkpoint" class="hidden bg-white p-6 rounded-b-2xl border border-t-0 border-slate-200 shadow-2xs space-y-6">
+          <div class="bg-amber-50 border border-amber-300 rounded-2xl p-5 space-y-3">
+            <div class="flex items-center space-x-2 text-amber-900 font-extrabold text-base">
+              <i data-lucide="flag" class="w-5 h-5 text-amber-700"></i>
+              <span id="checkpointTitle">Week Checkpoint</span>
+            </div>
+            <p id="checkpointDescription" class="text-xs text-amber-950 font-medium leading-relaxed">
+              Checkpoint requirements description...
+            </p>
+          </div>
+
+          <div>
+            <h4 class="text-sm font-extrabold text-slate-900 mb-2">Required Deliverables:</h4>
+            <ul id="checkpointDeliverablesList" class="list-disc pl-5 text-xs text-slate-800 space-y-1.5 font-medium">
+              <!-- Deliverables list -->
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- INTERVIEW QUESTIONS PORTAL SCREEN (Hidden by default) -->
+      <div id="interviewPortalScreen" class="hidden space-y-6">
+        <div class="bg-gradient-to-r from-indigo-900 via-purple-900 to-slate-950 rounded-2xl p-6 text-white shadow-md">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+              <div class="p-2.5 bg-indigo-500/20 rounded-xl border border-indigo-400/30">
+                <i data-lucide="help-circle" class="w-6 h-6 text-amber-300"></i>
+              </div>
+              <div>
+                <h2 class="text-xl sm:text-2xl font-black">Odoo Functional Consultant Interview Portal</h2>
+                <p class="text-xs text-indigo-200 font-medium">Top technical, functional & real-world scenario questions asked by top Odoo partner firms.</p>
+              </div>
+            </div>
+
+            <!-- Global Expand All Toggle Button -->
+            <button onclick="toggleExpandAllInterviewAnswers()" id="expandAllAnswersBtn"
+              class="px-4 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold rounded-xl text-xs shadow transition flex items-center space-x-2">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+              <span id="expandAllBtnText">Show All 50+ Answers</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="flex flex-wrap gap-2" id="interviewCategories">
+          <!-- Populated via JS -->
+        </div>
+
+        <!-- Questions List Container -->
+        <div id="interviewQuestionsList" class="space-y-4">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+
+      <!-- CLIENT IMPLEMENTATION BLUEPRINT SCREEN (Hidden by default) -->
+      <div id="blueprintScreen" class="hidden space-y-6">
+        <div class="bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-950 rounded-2xl p-6 text-white shadow-md">
+          <div class="flex items-center space-x-3 mb-2">
+            <div class="p-2.5 bg-emerald-500/20 rounded-xl border border-emerald-400/30">
+              <i data-lucide="briefcase" class="w-6 h-6 text-amber-300"></i>
+            </div>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black">Client Implementation & Freelance Blueprint</h2>
+              <p class="text-xs text-teal-200 font-medium">Step-by-step roadmap for conducting discovery, gap analysis, data migration, and go-live.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="blueprintPhasesContainer" class="space-y-4">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+
+      <!-- CONSULTANT TEMPLATES LIBRARY SCREEN (Hidden by default) -->
+      <div id="templatesScreen" class="hidden space-y-6">
+        <div class="bg-gradient-to-r from-amber-900 via-orange-950 to-slate-950 rounded-2xl p-6 text-white shadow-md">
+          <div class="flex items-center space-x-3 mb-2">
+            <div class="p-2.5 bg-amber-500/20 rounded-xl border border-amber-400/30">
+              <i data-lucide="file-text" class="w-6 h-6 text-amber-300"></i>
+            </div>
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black">Consultant Data Migration CSV & Form Templates</h2>
+              <p class="text-xs text-amber-200 font-medium">Ready-to-use CSV templates for client data migration and discovery questionnaires.</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="templatesContainer" class="grid grid-cols-1 gap-6">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+
+      <!-- FINAL EXAM & CERTIFICATE VIEW (Hidden by default) -->
+      <div id="finalExamScreen" class="hidden space-y-6">
+        <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-2xs space-y-6">
+          <div class="flex items-center space-x-3 text-purple-900">
+            <i data-lucide="award" class="w-8 h-8 text-amber-500"></i>
+            <div>
+              <h2 class="text-2xl font-black text-slate-900">Final Assessment & Certification</h2>
+              <p class="text-xs text-slate-500 font-medium">Odoo for Business Foundation Track Assessment</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+              <h4 class="font-extrabold text-slate-900 text-sm">Grading System Breakdown</h4>
+              <ul class="space-y-1.5 text-slate-800 font-medium">
+                <li>• Weekly Checkpoints (6 total): <strong>30%</strong></li>
+                <li>• Mid-Course Practical Test: <strong>15%</strong></li>
+                <li>• Studio Mini Project: <strong>15%</strong></li>
+                <li>• Final Practical Test: <strong>30%</strong></li>
+                <li>• Class Participation & Labs: <strong>10%</strong></li>
+              </ul>
+            </div>
+
+            <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-950 space-y-2">
+              <h4 class="font-extrabold text-emerald-900 text-sm">Certification Eligibility</h4>
+              <p class="font-medium">To pass and earn your <strong>Odoo Functional Consultant Certificate</strong>, you must achieve:</p>
+              <ul class="space-y-1 font-bold">
+                <li>✓ At least 80% attendance / session completions</li>
+                <li>✓ Combined overall grade minimum of 60%</li>
+                <li>✓ Successful completion of final practical test</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="border-t pt-6 text-center">
+            <button onclick="openCertificateModal()" class="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-black rounded-xl shadow-md text-sm transition inline-flex items-center space-x-2">
+              <i data-lucide="award" class="w-5 h-5"></i>
+              <span>Generate Official Certificate</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- SEARCH MODAL -->
+  <div id="searchModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-start justify-center pt-20 px-4">
+    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden">
+      <div class="p-4 border-b border-slate-100 flex items-center space-x-3">
+        <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
+        <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Search topics, interview questions (e.g. FIFO, Landed Costs, Studio, CoA)..."
+          class="flex-1 text-sm bg-transparent border-none focus:outline-none text-slate-800 placeholder-slate-400 font-medium">
+        <button onclick="closeSearchModal()" class="text-xs text-slate-400 hover:text-slate-600 px-2 py-1 rounded bg-slate-100">ESC</button>
+      </div>
+
+      <div id="searchResults" class="max-h-96 overflow-y-auto p-4 divide-y divide-slate-100">
+        <div class="text-center text-xs text-slate-400 py-8">Type a search term above to find lessons, labs, templates, and interview topics...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CERTIFICATE MODAL -->
+  <div id="certModal" class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl border-4 border-amber-400 w-full max-w-3xl overflow-hidden p-8 relative">
+      <button onclick="closeCertificateModal()" class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="text-center space-y-4 print-only">
+        <div class="w-16 h-16 bg-odoo-purple text-white font-black text-3xl rounded-full flex items-center justify-center mx-auto shadow-md">
+          O
+        </div>
+        <h2 class="text-3xl font-extrabold text-slate-900 tracking-wide uppercase">Certificate of Completion</h2>
+        <p class="text-xs text-slate-500 font-mono">THIS CERTIFIES THAT</p>
+        <h3 class="text-2xl font-bold text-odoo-purple border-b-2 border-amber-400 inline-block px-8 py-1">Odoo Functional Student</h3>
+        <p class="text-sm text-slate-700 max-w-lg mx-auto pt-2">
+          has successfully completed the 36-Hour practical training program in ERP & Business Automation:
+        </p>
+        <h4 class="text-lg font-bold text-slate-900">Odoo for Business (Foundation Track)</h4>
+        <p class="text-xs text-slate-500">Covering Sales, Purchasing, Landed Costs, Inventory (FIFO/FEFO), Accounting & CoA, MRP BoM, HR Payroll, and Odoo Studio.</p>
+
+        <div class="pt-8 flex items-center justify-between text-xs text-slate-400 border-t mt-6">
+          <div>
+            <div class="font-bold text-slate-700">Platform Used</div>
+            <div>Odoo Enterprise & Studio</div>
+          </div>
+          <div>
+            <div class="font-bold text-slate-700">Issued Date</div>
+            <div id="certDate">September 2026</div>
+          </div>
+          <div>
+            <div class="font-bold text-slate-700">Status</div>
+            <div class="text-emerald-600 font-bold">VERIFIED COMPLETE</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 text-center no-print">
+        <button onclick="window.print()" class="px-5 py-2 bg-odoo-purple text-white font-bold text-xs rounded-xl shadow hover:bg-purple-900 transition inline-flex items-center space-x-2">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+          <span>Print / Export PDF</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Logic JS -->
+  <script src="course-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
